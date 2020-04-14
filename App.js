@@ -1,19 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import Campobase from './componentes/CampobaseComponent';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Ongi Etorri Gaztaroa aplikaziora!</Text>
-    </View>
-  );
+export default class App extends React.Component {
+  render() {
+    return (
+      <Campobase />
+    );
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffc',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
