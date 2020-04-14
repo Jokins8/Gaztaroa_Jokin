@@ -10,6 +10,7 @@ function Calendario(props) {
                 title={item.nombre}
                 subtitle={item.descripcion}
                 hideChevron={true}
+                onPress={() => props.onPress(item.id)}
                 leftAvatar={{ source: require('./imagenes/40Años.png') }}
             />
         );
