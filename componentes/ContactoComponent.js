@@ -1,40 +1,24 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { Card } from 'react-native-elements';
-import { CONTACTO } from '../comun/contacto';
 
-function RenderContacto(props) {
-
-    const contacto = props.contacto;
-    
-    if (contacto != null) {
-        return(
-            <Card
+function RenderContacto() {
+    return (
+        <Card
             title='Información de contacto'>
-                <Text style={{margin: 10}}>{contacto.saludo}</Text>
-                <Text style={{margin: 10}}>{contacto.texto}</Text>
-                <Text style={{margin: 10}}> {contacto.adios}</Text>
-                <Text style={{margin: 10}}>{contacto.telefono}</Text>
-                <Text style={{margin: 10}}>{contacto.email}</Text>
-            </Card>
-        );
-    }
-    else {
-        return(<View></View>);
-    }
+            <Text style={{ margin: 10 }}>Kaixo Mendizale!</Text>
+            <Text style={{ margin: 10 }}> Si quieres participar en las salidas de montaña que organizamos o quieres hacerte soci@ de Gaztaroa, puedes contactar con nosotros a través de diferentes medios. Puedes llamarnos por teléfono los jueves de las semanas que hay salida (de 20:00 a 21:00). También puedes ponerte en contacto con nosotros escribiendo un correo electrónico, o utilizando la aplicación de esta página web. Y además puedes seguirnos en Facebook.</Text>
+            <Text style={{ margin: 10 }}> Para lo que quieras, estamos a tu disposición!</Text>
+            <Text style={{ margin: 10 }}>Tel: +34 948 277151</Text>
+            <Text style={{ margin: 10 }}>Email: gaztaroa@gaztaroa.com</Text>
+        </Card>
+    );
 }
 
 class Contacto extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            contacto: CONTACTO
-        };
+
+    render() {
+        return (<RenderContacto />);
     }
-
-    render(){
-        return(<RenderContacto contacto={this.state.contacto} />);
-    } 
 }
-
 export default Contacto;
