@@ -1,20 +1,16 @@
 import React, { Component } from 'react';
 import { FlatList } from 'react-native';
 import { ListItem } from 'react-native-elements';
-
-
 import { baseUrl } from '../comun/comun';
 import { connect } from 'react-redux';
 
 const mapStateToProps = state => {
-
     return {
-        excursiones: state.excursiones
+      excursiones: state.excursiones
     }
-}
+  }
 
 class Calendario extends Component {
-    
 
     render(){
         const { navigate } = this.props.navigation;
@@ -27,11 +23,11 @@ class Calendario extends Component {
                         subtitle={item.descripcion}
                         hideChevron={true}
                         onPress={() => navigate('DetalleExcursion', { excursionId: item.id })}
-                        leftAvatar={{ source: { uri: baseUrl + item.imagen }}}
-                    />                                
+                        leftAvatar={{source: {uri: baseUrl + item.imagen}}}
+                    />
             );
         }
-       
+
         return (
             <FlatList 
                 data={this.props.excursiones.excursiones}
@@ -41,4 +37,5 @@ class Calendario extends Component {
         );
     };
 }
+
 export default connect(mapStateToProps)(Calendario);

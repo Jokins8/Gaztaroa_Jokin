@@ -1,21 +1,16 @@
 import React, { Component } from 'react';
 import { Text, ScrollView, View } from 'react-native';
 import { Card } from 'react-native-elements';
-
-
 import { baseUrl } from '../comun/comun';
-
 import { connect } from 'react-redux';
 
 const mapStateToProps = state => {
-
     return {
-        excursiones: state.excursiones,
-        actividades: state.actividades,
-        cabeceras: state.cabeceras
+      excursiones: state.excursiones,
+      cabeceras: state.cabeceras,
+      actividades: state.actividades
     }
-}
-
+  }
 
 function RenderItem(props) {
     
