@@ -185,7 +185,7 @@ function DrawerNavegador() {
         initialRouteName="Home"
         drawerContent={props => <CustomDrawerContent {...props} />}
       >
-        <Drawer.Screen name="Campo base" component={HomeNavegador}
+        <Drawer.Screen name="Home" component={HomeNavegador}
           options={{
             drawerIcon: ({ tintColor}) => (
               <Icon
@@ -197,7 +197,7 @@ function DrawerNavegador() {
             )
             }}
         />        
-        <Drawer.Screen name="Quiénes somos" component={QuienesSomosNavegador}
+        <Drawer.Screen name="QuienesSomos" component={QuienesSomosNavegador}
           options={{
               drawerIcon: ({ tintColor}) => (
                 <Icon
@@ -233,7 +233,7 @@ function DrawerNavegador() {
             )
             }}
         />
-         <Drawer.Screen name="Prueba de Esfuerzo" component={PruebaEsfuerzoNavegador}
+         <Drawer.Screen name="PruebaEsfuerzo" component={PruebaEsfuerzoNavegador}
           options={{
             drawerIcon: ({ tintColor}) => (
               <Icon
