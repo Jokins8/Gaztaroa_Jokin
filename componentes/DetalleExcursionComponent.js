@@ -140,8 +140,6 @@ class DetalleExcursion extends Component {
                     <View style={styles.modal}>
                         <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
                             <Rating
-                                ratingCount={5}
-                                defaultRating={3}
                                 showRating
                                 onFinishRating={value => this.setState({ valoracion: value })}
                             />
