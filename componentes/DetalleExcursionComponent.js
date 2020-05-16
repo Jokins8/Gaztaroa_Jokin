@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button } from 'react-native';
+import React, { Component, useRef } from 'react';
+import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { baseUrl } from '../comun/comun';
@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { postFavorito, postComentario } from '../redux/ActionCreators';
 import { colorGaztaroaOscuro } from '../comun/comun';
 
+import * as Animatable from 'react-native-animatable';
 
 const mapStateToProps = state => {
     return {
@@ -27,33 +28,79 @@ function RenderExcursion(props) {
 
     const excursion = props.excursion;
 
+    const cardAnimada = useRef(null);
+    const reconocerDragDerechaIzquierda = ({ moveX, moveY, dx, dy }) => {
+        if (dx < -50)
+            return true;
+        else
+            return false;
+    }
+    const reconocerDragIzquierdaDerecha = ({ moveX, moveY, dx, dy }) => {
+        if (dx > 50)
+            return true;
+        else
+            return false;
+    }
+    const panResponder = PanResponder.create({
+        onStartShouldSetPanResponder: (e, gestureState) => {
+            return true;
+        },
+        onPanResponderGrant: () => {
+            cardAnimada.current.rubberBand(1000)
+                .then(endState => console.log(endState.finished ? 'terminado' : 'cancelado'));
+        },
+        onPanResponderEnd: (e, gestureState) => {
+            console.log("PanResponder finalizado", gestureState);
+            if (reconocerDragDerechaIzquierda(gestureState)) {
+                Alert.alert(
+                    'Añadir favorito',
+                    'Confirmar que desea añadir' + excursion.nombre + ' a favoritos:',
+                    [
+                        { text: 'Cancelar', onPress: () => console.log('Excursión no añadida a favoritos'), style: 'cancel' },
+                        { text: 'OK', onPress: () => { props.favorita ? console.log('La excursión ya se encuentra entre las favoritas') : props.onPressFav() } },
+                    ],
+                    { cancelable: false }
+                );
+
+                return true;
+            } else if (reconocerDragIzquierdaDerecha(gestureState)) {
+                props.onPressCom();
+                return true;
+            }
+        }
+    })
+
+
     if (excursion != null) {
         return (
-            <Card
-                featuredTitle={excursion.nombre}
-                image={{ uri: baseUrl + excursion.imagen }}>
-                <Text style={{ margin: 10 }}>
-                    {excursion.descripcion}
-                </Text>
-                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                    <Icon
-                        raised
-                        reverse
-                        name={props.favorita ? 'heart' : 'heart-o'}
-                        type='font-awesome'
-                        color='#f50'
-                        onPress={() => props.favorita ? console.log('La excursión ya se encuentra entre las favoritas') : props.onPressFav()}
-                    />
-                    <Icon
-                        raised
-                        reverse
-                        name={'pencil'}
-                        type='font-awesome'
-                        color={colorGaztaroaOscuro}
-                        onPress={() => props.onPressCom()}
-                    />
-                </View>
-            </Card>
+            <Animatable.View animation="fadeInDown" duration={2000} delay={500} ref={cardAnimada}
+                {...panResponder.panHandlers} >
+                <Card
+                    featuredTitle={excursion.nombre}
+                    image={{ uri: baseUrl + excursion.imagen }}>
+                    <Text style={{ margin: 10 }}>
+                        {excursion.descripcion}
+                    </Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                        <Icon
+                            raised
+                            reverse
+                            name={props.favorita ? 'heart' : 'heart-o'}
+                            type='font-awesome'
+                            color='#f50'
+                            onPress={() => props.favorita ? console.log('La excursión ya se encuentra entre las favoritas') : props.onPressFav()}
+                        />
+                        <Icon
+                            raised
+                            reverse
+                            name={'pencil'}
+                            type='font-awesome'
+                            color={colorGaztaroaOscuro}
+                            onPress={() => props.onPressCom()}
+                        />
+                    </View>
+                </Card>
+            </Animatable.View>
         );
     }
     else {
@@ -77,13 +124,15 @@ function RenderComentario(props) {
     };
 
     return (
-        <Card title='Comentarios' >
-            <FlatList
-                data={comentarios}
-                renderItem={renderCommentarioItem}
-                keyExtractor={item => item.id.toString()}
-            />
-        </Card>
+        <Animatable.View animation="fadeInUp" duration={2000} delay={1000}>
+            <Card title='Comentarios' >
+                <FlatList
+                    data={comentarios}
+                    renderItem={renderCommentarioItem}
+                    keyExtractor={item => item.id.toString()}
+                />
+            </Card>
+        </Animatable.View>
     );
 }
 
@@ -96,7 +145,7 @@ class DetalleExcursion extends Component {
         this.state = {
             valoracion: 3,
             autor: '',
-            comentario:'',
+            comentario: '',
             showModal: false
         }
     }
@@ -109,14 +158,14 @@ class DetalleExcursion extends Component {
         this.setState({
             valoracion: 3,
             autor: '',
-            comentario:'',
+            comentario: '',
             showModal: false
         });
     }
     toggleModal() {
         this.setState({ showModal: !this.state.showModal });
     }
-    gestionarComentario(excursionId, valoracion, autor, comentario){
+    gestionarComentario(excursionId, valoracion, autor, comentario) {
         this.props.postComentario(excursionId, valoracion, autor, comentario);
         this.toggleModal()
     }
@@ -153,7 +202,7 @@ class DetalleExcursion extends Component {
                                 leftIcon={{ type: 'font-awesome', name: 'comment-o' }}
                                 onChangeText={value => this.setState({ comentario: value })}
                             />
-                             <Button
+                            <Button
                                 onPress={() => { this.gestionarComentario(excursionId, this.state.valoracion, this.state.autor, this.state.comentario); this.resetForm(); }}
                                 color={colorGaztaroaOscuro} title="ENVIAR"
                             />
@@ -173,7 +222,7 @@ const styles = StyleSheet.create({
     modal: {
         justifyContent: 'center', margin: 20
     },
-   
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DetalleExcursion);

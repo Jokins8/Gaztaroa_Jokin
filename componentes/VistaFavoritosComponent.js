@@ -26,7 +26,7 @@ class VistaFavoritos extends Component {
             "Confirme que desea borrar la excursion: " + name,
             [
                 {
-                    text: "Cancel",
+                    text: "Cancelar",
                     onPress: () => console.log(name + ' Favorito no borrado'),
                     style: "cancel"
                 },

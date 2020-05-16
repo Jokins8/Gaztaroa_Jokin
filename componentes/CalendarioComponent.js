@@ -4,6 +4,7 @@ import { ListItem } from 'react-native-elements';
 import { baseUrl } from '../comun/comun';
 import { connect } from 'react-redux';
 import IndicadorActividad from './IndicadorActividadComponent';
+import * as Animatable from 'react-native-animatable';
 
 
 const mapStateToProps = state => {
@@ -19,6 +20,7 @@ class Calendario extends Component {
 
         const renderCalendarioItem = ({ item, index }) => {
             return (
+                <Animatable.View animation="fadeInRight" duration={2000} delay={10}>
                 <ListItem
                     key={index}
                     title={item.nombre}
@@ -27,6 +29,7 @@ class Calendario extends Component {
                     onPress={() => navigate('DetalleExcursion', { excursionId: item.id })}
                     leftAvatar={{ source: { uri: baseUrl + item.imagen } }}
                 />
+                </Animatable.View>
             );
         }
 

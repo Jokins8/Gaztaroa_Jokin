@@ -16,7 +16,7 @@ export const ConfigureStore = () => {
             actividades,
             favoritos
         }),
-        applyMiddleware(thunk)
+        applyMiddleware(thunk, logger)
     );
 
     return store;

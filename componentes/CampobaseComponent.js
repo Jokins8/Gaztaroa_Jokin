@@ -145,7 +145,6 @@ function VistaFavoritosNavegador({ navigation }) {
         headerTintColor: '#fff',
         headerStyle: { backgroundColor: colorGaztaroaOscuro },
         headerTitleStyle: { color: '#fff' },
-        headerLeft: () => (<Icon name="menu" size={28} color='white' onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} />),
       }}
     >
       <Stack.Screen
@@ -153,6 +152,8 @@ function VistaFavoritosNavegador({ navigation }) {
         component={VistaFavoritos}
         options={{
           title: 'Excursiones Favoritas',
+          headerLeft: () => (<Icon name="menu" size={28} color='white' onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} />),
+
         }}
       />
 
@@ -310,7 +311,9 @@ class Campobase extends Component {
         <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight }}>
           <DrawerNavegador />
         </View>
+        
       </NavigationContainer>
+      
     );
   }
 }
