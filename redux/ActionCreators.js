@@ -9,7 +9,7 @@ import { db } from '../comun/comun';
   });*/
 
 export const fetchComentarios = () => (dispatch) => {
-    return fetch(db.ref('comentarios')+'.json')
+    return fetch(db.ref('comentarios') + '.json')
         .then(response => {
             if (response.ok) {
                 return response;
@@ -42,7 +42,7 @@ export const fetchExcursiones = () => (dispatch) => {
 
     dispatch(excursionesLoading());
 
-    return fetch(db.ref('excursiones')+'.json')
+    return fetch(db.ref('excursiones') + '.json')
         .then(response => {
             if (response.ok) {
                 return response;
@@ -79,7 +79,7 @@ export const fetchCabeceras = () => (dispatch) => {
 
     dispatch(cabecerasLoading());
 
-    return fetch(db.ref('cabeceras')+'.json')
+    return fetch(db.ref('cabeceras') + '.json')
         .then(response => {
             if (response.ok) {
                 return response;
@@ -116,7 +116,7 @@ export const fetchActividades = () => (dispatch) => {
 
     dispatch(actividadesLoading());
 
-    return fetch(db.ref('actividades')+'.json')
+    return fetch(db.ref('actividades') + '.json')
         .then(response => {
             if (response.ok) {
                 return response;
@@ -166,15 +166,20 @@ export const borrarFavorito = (excursionId) => ({
     payload: excursionId
 });
 
-export const postComentario = (excursionId, valoracion, autor, comentario) => (dispatch) => {
+export const postComentario = (excursionId, valoracion, autor, comentario, id) => (dispatch) => {
     setTimeout(() => {
         var d = new Date();
         var dia = d.toISOString();
-        dispatch(addComentario(excursionId, valoracion, autor, comentario, dia));
+  
+        db.ref('comentarios').child(id).set({
+            'autor': autor, 'comentario': comentario, 'dia': dia,
+            'excursionId': excursionId, 'id': id, 'valoracion': valoracion
+        })
+        dispatch(addComentario(excursionId, valoracion, autor, comentario, dia, id));
     }, 2000);
 };
 
-export const addComentario = (excursionId, valoracion, autor, comentario, dia) => ({
+export const addComentario = (excursionId, valoracion, autor, comentario, dia, id) => ({
     type: ActionTypes.ADD_COMENTARIO,
-    payload: [excursionId, valoracion, autor, comentario, dia]
+    payload: [excursionId, valoracion, autor, comentario, dia, id]
 });

@@ -18,7 +18,7 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = dispatch => ({
     postFavorito: (excursionId) => dispatch(postFavorito(excursionId)),
-    postComentario: (excursionId, valoracion, autor, comentario) => dispatch(postComentario(excursionId, valoracion, autor, comentario))
+    postComentario: (excursionId, valoracion, autor, comentario, id) => dispatch(postComentario(excursionId, valoracion, autor, comentario, id))
 })
 
 
@@ -164,8 +164,8 @@ class DetalleExcursion extends Component {
     toggleModal() {
         this.setState({ showModal: !this.state.showModal });
     }
-    gestionarComentario(excursionId, valoracion, autor, comentario) {
-        this.props.postComentario(excursionId, valoracion, autor, comentario);
+    gestionarComentario(excursionId, valoracion, autor, comentario, id) {
+        this.props.postComentario(excursionId, valoracion, autor, comentario, id);
         this.toggleModal()
     }
 
@@ -202,7 +202,7 @@ class DetalleExcursion extends Component {
                                 onChangeText={value => this.setState({ comentario: value })}
                             />
                             <Button
-                                onPress={() => { this.gestionarComentario(excursionId, this.state.valoracion, this.state.autor, this.state.comentario); this.resetForm(); }}
+                                onPress={() => { this.gestionarComentario(excursionId, this.state.valoracion, this.state.autor, this.state.comentario, this.props.comentarios.comentarios.length); this.resetForm(); }}
                                 color={colorGaztaroaOscuro} title="ENVIAR"
                             />
                             <Button
