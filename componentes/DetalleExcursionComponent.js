@@ -9,6 +9,8 @@ import { colorGaztaroaOscuro } from '../comun/comun';
 
 import * as Animatable from 'react-native-animatable';
 
+
+
 const mapStateToProps = state => {
     return {
         excursiones: state.excursiones,
