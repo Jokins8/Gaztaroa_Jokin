@@ -1,8 +1,15 @@
 import * as ActionTypes from './ActionTypes';
-import { baseUrl } from '../comun/comun';
+import { db } from '../comun/comun';
+
+//let comentariosRef = db.ref('/comentarios');
+/*comentariosRef.on('value', snapshot => {
+    let data = snapshot.val();
+    console.log(Object.values(data));
+   
+  });*/
 
 export const fetchComentarios = () => (dispatch) => {
-    return fetch(baseUrl + 'comentarios')
+    return fetch(db.ref('comentarios')+'.json')
         .then(response => {
             if (response.ok) {
                 return response;
@@ -35,7 +42,7 @@ export const fetchExcursiones = () => (dispatch) => {
 
     dispatch(excursionesLoading());
 
-    return fetch(baseUrl + 'excursiones')
+    return fetch(db.ref('excursiones')+'.json')
         .then(response => {
             if (response.ok) {
                 return response;
@@ -72,7 +79,7 @@ export const fetchCabeceras = () => (dispatch) => {
 
     dispatch(cabecerasLoading());
 
-    return fetch(baseUrl + 'cabeceras')
+    return fetch(db.ref('cabeceras')+'.json')
         .then(response => {
             if (response.ok) {
                 return response;
@@ -109,7 +116,7 @@ export const fetchActividades = () => (dispatch) => {
 
     dispatch(actividadesLoading());
 
-    return fetch(baseUrl + 'actividades')
+    return fetch(db.ref('actividades')+'.json')
         .then(response => {
             if (response.ok) {
                 return response;

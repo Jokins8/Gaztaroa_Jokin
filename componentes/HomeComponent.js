@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { Text, ScrollView, View } from 'react-native';
 import { Card } from 'react-native-elements';
-import { baseUrl } from '../comun/comun';
 import { connect } from 'react-redux';
 import IndicadorActividad from './IndicadorActividadComponent';
 import * as Animatable from 'react-native-animatable';
-import TextAnimator from './TextAnimator'
+
 
 const mapStateToProps = state => {
     return {
@@ -32,15 +31,13 @@ function RenderItem(props) {
     }
     else {
         if (item != null) {
+            console.log(item.imagen);
             return (
                 <Animatable.View animation="zoomIn" duration={2000} delay={10}>
                     <Card
                         featuredTitle={item.nombre}
-                        image={{ uri: baseUrl + item.imagen }}>
-                        <TextAnimator
-                            content={item.descripcion}
-                            timing={500}
-                        />
+                        image={{ uri: item.imagen }}>
+                        <Text>{item.descripcion} </Text>
                     </Card>
                 </Animatable.View >
             );

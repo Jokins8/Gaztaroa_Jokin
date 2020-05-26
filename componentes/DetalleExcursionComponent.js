@@ -2,7 +2,6 @@ import React, { Component, useRef } from 'react';
 import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
-import { baseUrl } from '../comun/comun';
 import { connect } from 'react-redux';
 
 import { postFavorito, postComentario } from '../redux/ActionCreators';
@@ -77,7 +76,7 @@ function RenderExcursion(props) {
                 {...panResponder.panHandlers} >
                 <Card
                     featuredTitle={excursion.nombre}
-                    image={{ uri: baseUrl + excursion.imagen }}>
+                    image={{ uri: excursion.imagen }}>
                     <Text style={{ margin: 10 }}>
                         {excursion.descripcion}
                     </Text>
