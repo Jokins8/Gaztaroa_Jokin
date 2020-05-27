@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
-import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Modal } from 'react-native';
+import React, { Component, useEffect } from 'react';
+import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Modal, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DatePicker from 'react-native-datepicker'
 import { colorGaztaroaOscuro } from '../comun/comun';
+import * as Calendar from 'expo-calendar';
+
 
 class PruebaEsfuerzo extends Component {
 
@@ -13,12 +15,13 @@ class PruebaEsfuerzo extends Component {
             edad: 18,
             federado: false,
             fecha: '',
-            showModal: false
+            showModal: false,
+            calendario: ''
         }
     }
 
     gestionarReserva() {
-        console.log(JSON.stringify(this.state));
+        //console.log(JSON.stringify(this.state));
         this.toggleModal();
     }
 
@@ -33,8 +36,73 @@ class PruebaEsfuerzo extends Component {
     toggleModal() {
         this.setState({ showModal: !this.state.showModal });
     }
+
+    async  getDefaultCalendarSource() {
+        const calendars = await Calendar.getCalendarsAsync();
+        const defaultCalendars = calendars.filter(each => each.source.name === 'iCloud');
+        return defaultCalendars[0].source;
+    }
+
+    async  createEvent(details) {
+        const { status } = await Calendar.requestCalendarPermissionsAsync();
+        if (status === 'granted') {
+            this.setState({ calendario: await Calendar.getCalendarsAsync() });
+            //Creamos un calendario Gaztaroa dentro de iCloud en caso de que no exista
+            if (this.state.calendario.filter(each => each.title === 'Gaztaroa') == false) {
+                const defaultCalendarSource =
+                    Platform.OS === 'ios'
+                        ? await this.getDefaultCalendarSource()
+                        : { isLocalAccount: true, name: 'Gaztaroa' };
+
+                const newCalendarID = await Calendar.createCalendarAsync({
+                    title: 'Gaztaroa',
+                    color: 'blue',
+                    entityType: Calendar.EntityTypes.EVENT,
+                    sourceId: defaultCalendarSource.id,
+                    source: defaultCalendarSource,
+                    name: 'internalCalendarName',
+                    ownerAccount: 'personal',
+                    accessLevel: Calendar.CalendarAccessLevel.OWNER,
+                });
+                //console.log(`Your new calendar ID is: ${newCalendarID}`);
+            }
+            //Añadimos el evento al calendario gaztaroa
+            this.setState({ calendario: await Calendar.getCalendarsAsync() });
+            const calendarioGaztaroa = this.state.calendario.filter(each => each.title === 'Gaztaroa');
+            console.log(calendarioGaztaroa[0].id);
+            Calendar.createEventAsync(calendarioGaztaroa[0].id, details)
+        }
+    }
+
+    EventoAlert = (details) =>
+        Alert.alert(
+            "Añadir evento al calendario?",
+            "El evento se añadira al calendario Gaztaroa dentro de los calendarios de iCloud ",
+            [
+                {
+                    text: "Cancelar",
+                    onPress: () => console.log(' Evento no guardado'),
+                    style: "Cancelar"
+                },
+                { text: "OK", onPress: () => { this.createEvent(details); this.toggleModal(); this.resetForm(); } }
+            ],
+            { cancelable: false }
+        );
+
     render() {
+
+
+        var date = new Date(this.state.fecha);
+        const details = {
+            endDate: date,
+            location: "Gaztaroa mediku zentroa",
+            startDate: date,
+            title: "Prueba de esfuerzo Gaztaroa",
+            url: "http://www.Gaztaroa.eus"
+        };
+
         return (
+
             <ScrollView>
                 <View style={styles.formRow}>
                     <Text style={styles.formLabel}>Edad</Text>
@@ -109,6 +177,10 @@ class PruebaEsfuerzo extends Component {
                                 onPress={() => { this.toggleModal(); this.resetForm(); }}
                                 color={colorGaztaroaOscuro} title="Cerrar"
                             />
+                            <Button
+                                onPress={() => { this.EventoAlert(details); }}
+                                color={colorGaztaroaOscuro} title="Añadir a calendario"
+                            />
                         </SafeAreaView>
                     </View>
                 </Modal>
@@ -147,3 +219,4 @@ const styles = StyleSheet.create({
 });
 
 export default PruebaEsfuerzo;
+

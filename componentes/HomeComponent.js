@@ -31,7 +31,6 @@ function RenderItem(props) {
     }
     else {
         if (item != null) {
-            console.log(item.imagen);
             return (
                 <Animatable.View animation="zoomIn" duration={2000} delay={10}>
                     <Card
