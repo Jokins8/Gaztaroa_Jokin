@@ -22,6 +22,7 @@
     "expo-contacts": "~8.1.0",
     "expo-image-manipulator": "~8.1.0",
     "expo-image-picker": "~8.1.0",
+    "expo-mail-composer": "~8.1.0",
     "expo-sensors": "~8.1.0",
     "firebase": "^7.14.5",
     "react": "~16.9.0",
