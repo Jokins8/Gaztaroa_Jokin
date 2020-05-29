@@ -17,6 +17,7 @@ import { colorGaztaroaClaro, colorGaztaroaOscuro } from '../comun/comun';
 import { connect } from 'react-redux';
 import { fetchExcursiones, fetchComentarios, fetchCabeceras, fetchActividades } from '../redux/ActionCreators';
 
+
 const mapStateToProps = state => {
   return {
     excursiones: state.excursiones,

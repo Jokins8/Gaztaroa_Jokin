@@ -1,10 +1,13 @@
 import React, { Component, useEffect } from 'react';
-import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Modal, Alert } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Modal, Alert, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DatePicker from 'react-native-datepicker'
 import { colorGaztaroaOscuro } from '../comun/comun';
 import * as Calendar from 'expo-calendar';
-
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
+import * as Permissions from 'expo-permissions';
+import { Card, Icon} from 'react-native-elements';
 
 class PruebaEsfuerzo extends Component {
 
@@ -16,7 +19,8 @@ class PruebaEsfuerzo extends Component {
             federado: false,
             fecha: '',
             showModal: false,
-            calendario: ''
+            calendario: '',
+            image: "https://firebasestorage.googleapis.com/v0/b/gaztaroa-2faee.appspot.com/o/unknown.png?alt=media&token=5705e0da-b3ce-4a81-8e76-3dfe0ee4d006"
         }
     }
 
@@ -89,6 +93,63 @@ class PruebaEsfuerzo extends Component {
             { cancelable: false }
         );
 
+    componentDidMount() {
+        this.getPermissionAsyncCamera();
+        this.getPermissionAsyncRoll();
+    }
+
+    getPermissionAsyncCamera = async () => {
+        if (Constants.platform.ios) {
+            const { status } = await Permissions.askAsync(Permissions.CAMERA);
+            if (status !== 'granted') {
+                alert('Sorry, we need camera roll permissions to make this work!');
+            }
+        }
+    };
+    getPermissionAsyncRoll = async () => {
+        if (Constants.platform.ios) {
+            const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+            if (status !== 'granted') {
+                alert('Sorry, we need camera roll permissions to make this work!');
+            }
+        }
+    };
+
+    _pickImageCamera = async () => {
+        try {
+            let result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+            if (!result.cancelled) {
+                this.setState({ image: result.uri });
+            }
+
+            console.log(result);
+        } catch (E) {
+            console.log(E);
+        }
+    };
+    _pickImageRoll = async () => {
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+            if (!result.cancelled) {
+                this.setState({ image: result.uri });
+            }
+
+            console.log(result);
+        } catch (E) {
+            console.log(E);
+        }
+    };
+
     render() {
 
 
@@ -101,60 +162,80 @@ class PruebaEsfuerzo extends Component {
             url: "http://www.Gaztaroa.eus"
         };
 
+        let { image } = this.state;
+
         return (
 
             <ScrollView>
-                <View style={styles.formRow}>
-                    <Text style={styles.formLabel}>Edad</Text>
-                    <Picker
-                        style={styles.formItem}
-                        selectedValue={this.state.edad}
-                        onValueChange={(itemValue, itemIndex) => this.setState({ edad: itemValue })}>
-                        <Picker.Item label="< 20" value="< 20" />
-                        <Picker.Item label="20 - 30" value="20 - 30" />
-                        <Picker.Item label="31 - 40" value="31 - 40" />
-                        <Picker.Item label="41 - 50" value="41 - 50" />
-                        <Picker.Item label="51 - 60" value="51 - 60" />
-                        <Picker.Item label="> 60" value="> 60" />
-                    </Picker>
-                </View>
+                <Card>
+                    <View style={styles.formRow}>
+                        {this.state.image && <Image source={{ uri: this.state.image }} style={{ width: 100, height: 100, borderRadius: 400 / 2 }} />}
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                        <Icon
+                            reverse
+                            name="camera"
+                            type='font-awesome'
+                            onPress={this._pickImageCamera}
+                        />
+                        <Icon
+                            reverse
+                            name="image"
+                            type='font-awesome'
+                            onPress={this._pickImageRoll}
+                        />
+                    </View>
+                    <View style={styles.formRow}>
+                        <Text style={styles.formLabel}>Edad</Text>
+                        <Picker
+                            style={styles.formItem}
+                            selectedValue={this.state.edad}
+                            onValueChange={(itemValue, itemIndex) => this.setState({ edad: itemValue })}>
+                            <Picker.Item label="< 20" value="< 20" />
+                            <Picker.Item label="20 - 30" value="20 - 30" />
+                            <Picker.Item label="31 - 40" value="31 - 40" />
+                            <Picker.Item label="41 - 50" value="41 - 50" />
+                            <Picker.Item label="51 - 60" value="51 - 60" />
+                            <Picker.Item label="> 60" value="> 60" />
+                        </Picker>
+                    </View>
 
-                <View style={styles.formRow}>
-                    <Text style={styles.formLabel}>Federado/No-federado?</Text>
-                    <Switch
-                        style={styles.formItem}
-                        value={this.state.federado}
-                        trackColor={colorGaztaroaOscuro}
-                        onValueChange={(value) => this.setState({ federado: value })}>
-                    </Switch>
-                </View>
+                    <View style={styles.formRow}>
+                        <Text style={styles.formLabel}>Federado/No-federado?</Text>
+                        <Switch
+                            style={styles.formItem}
+                            value={this.state.federado}
+                            trackColor={colorGaztaroaOscuro}
+                            onValueChange={(value) => this.setState({ federado: value })}>
+                        </Switch>
+                    </View>
 
-                <View style={styles.formRow}>
-                    <Text style={styles.formLabel}>Día y hora</Text>
-                    <DatePicker
-                        style={{ flex: 2, marginRight: 20 }}
-                        date={this.state.fecha}
-                        format=''
-                        mode="datetime"
-                        placeholder="Seleccionar fecha y hora"
-                        minDate="2020-01-01"
-                        confirmBtnText="Confirmar"
-                        cancelBtnText="Cancelar"
-                        customStyles={{
-                            dateIcon: {
-                                position: 'absolute',
-                                left: 0,
-                                top: 4,
-                                marginLeft: 0
-                            },
-                            dateInput: {
-                                marginLeft: 36
-                            }
-                        }}
-                        onDateChange={(date) => { this.setState({ fecha: date }) }}
-                    />
-                </View>
-
+                    <View style={styles.formRow}>
+                        <Text style={styles.formLabel}>Día y hora</Text>
+                        <DatePicker
+                            style={{ flex: 2, marginRight: 20 }}
+                            date={this.state.fecha}
+                            format=''
+                            mode="datetime"
+                            placeholder="Seleccionar fecha y hora"
+                            minDate="2020-01-01"
+                            confirmBtnText="Confirmar"
+                            cancelBtnText="Cancelar"
+                            customStyles={{
+                                dateIcon: {
+                                    position: 'absolute',
+                                    left: 0,
+                                    top: 4,
+                                    marginLeft: 0
+                                },
+                                dateInput: {
+                                    marginLeft: 36
+                                }
+                            }}
+                            onDateChange={(date) => { this.setState({ fecha: date }) }}
+                        />
+                    </View>
+                </Card>
                 <View style={styles.formRow}>
                     <Button
                         onPress={() => this.gestionarReserva()}
@@ -170,6 +251,7 @@ class PruebaEsfuerzo extends Component {
                     <View style={styles.modal}>
                         <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
                             <Text style={styles.modalTitle}>Detalle de la reserva</Text>
+                            {this.state.image && <Image source={{ uri: this.state.image }} style={{ width: 100, height: 100, borderRadius: 400 / 2 }} />}
                             <Text style={styles.modalText}>Edad: {this.state.edad}</Text>
                             <Text style={styles.modalText}>Federado?: {this.state.federado ? 'Si' : 'No'}</Text>
                             <Text style={styles.modalText}>Día y hora: {this.state.fecha}</Text>
@@ -195,14 +277,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flex: 1,
         flexDirection: 'row',
-        margin: 20
+        margin: 10
     },
     formLabel: {
         fontSize: 18,
         flex: 2
     },
     formItem: {
-        flex: 1
+        flex: 1,
+        marginLeft: 4
     },
     modal: {
         justifyContent: 'center', margin: 20
