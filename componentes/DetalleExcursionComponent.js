@@ -1,5 +1,5 @@
 import React, { Component, useRef } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder } from 'react-native';
+import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder, Share } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
@@ -99,6 +99,14 @@ function RenderExcursion(props) {
                             color={colorGaztaroaOscuro}
                             onPress={() => props.onPressCom()}
                         />
+                        <Icon
+                            raised
+                            reverse
+                            name={'share-square'}
+                            type='font-awesome'
+                            color='black'
+                            onPress={() => props.onPressShare()}
+                        />
                     </View>
                 </Card>
             </Animatable.View>
@@ -138,6 +146,7 @@ function RenderComentario(props) {
 }
 
 
+
 class DetalleExcursion extends Component {
 
     constructor(props) {
@@ -170,6 +179,26 @@ class DetalleExcursion extends Component {
         this.props.postComentario(excursionId, valoracion, autor, comentario, id);
         this.toggleModal()
     }
+    async onShare(name) {
+        try {
+            const result = await Share.share({
+                message: 'Cuanto me ha gustado la excursión ' + name + ' organizada por el club de montaña Gaztaroa. Entra en Gaztaroa y disfruta de esta excursión y muchas más! Únete!',
+                url: 'https://www.gaztaroa.eus'
+            });
+
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
 
     render() {
         const { excursionId } = this.props.route.params;
@@ -180,6 +209,7 @@ class DetalleExcursion extends Component {
                     favorita={this.props.favoritos.some(el => el === excursionId)}
                     onPressFav={() => this.marcarFavorito(excursionId)}
                     onPressCom={() => this.toggleModal()}
+                    onPressShare={() => this.onShare(this.props.excursiones.excursiones[+excursionId].nombre)}
                 />
                 <RenderComentario
                     comentarios={this.props.comentarios.comentarios.filter((comentario) => comentario.excursionId === excursionId)}
