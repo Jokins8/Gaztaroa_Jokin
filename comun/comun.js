@@ -12,5 +12,5 @@ let config = {
 let app = Firebase.initializeApp(config);
 export const db = app.database();
 
-export const colorGaztaroaOscuro = '#015afc';
+export const colorGaztaroaOscuro = '#3C787E';
 export const colorGaztaroaClaro = '#c2d3da';

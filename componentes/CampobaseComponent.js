@@ -16,6 +16,10 @@ import Constants from 'expo-constants';
 import { colorGaztaroaClaro, colorGaztaroaOscuro } from '../comun/comun';
 import { connect } from 'react-redux';
 import { fetchExcursiones, fetchComentarios, fetchCabeceras, fetchActividades } from '../redux/ActionCreators';
+import SignUp from './SignupComponent';
+import Login from './LoginComponent';
+
+
 
 
 const mapStateToProps = state => {
@@ -53,7 +57,7 @@ function HomeNavegador({ navigation }) {
         name="Home"
         component={Home}
         options={{
-          title: 'Campo Base',
+          title: 'Campo Base',        
         }}
       />
     </Stack.Navigator>
@@ -192,6 +196,35 @@ function PruebaEsfuerzoNavegador({ navigation }) {
   );
 }
 
+function LoginNavegador({ navigation }) {
+  return (
+    <Stack.Navigator
+      initialRouteName="Login"
+      headerMode= 'none'
+      transitionConfig = 'noTransitionConfig'
+    >
+      <Stack.Screen
+        name="Login"
+        component={Login}
+      />
+    </Stack.Navigator>
+  );
+}
+function SignUpNavegador({ navigation }) {
+  return (
+    <Stack.Navigator
+      initialRouteName="SignUp"
+      headerMode= 'none'
+      transitionConfig = 'noTransitionConfig'
+    >
+      <Stack.Screen
+        name="SignUp"
+        component={SignUp}
+      />
+    </Stack.Navigator>
+  );
+}
+
 function CustomDrawerContent(props) {
   return (
     <DrawerContentScrollView {...props}>
@@ -219,6 +252,7 @@ function DrawerNavegador() {
       initialRouteName="Home"
       drawerContent={props => <CustomDrawerContent {...props} />}
     >
+
       <Drawer.Screen name="Home" component={HomeNavegador}
         options={{
           drawerIcon: ({ tintColor }) => (
@@ -291,10 +325,57 @@ function DrawerNavegador() {
           )
         }}
       />
+      <Drawer.Screen name="Logout" component={GaztaroaNavegador}
+        options={{
+          drawerIcon: ({ tintColor }) => (
+            <Icon
+              name='sign-out'
+              type='font-awesome'
+              size={22}
+              color={tintColor}
+            />
+          ),
+          gestureEnabled: false
+        }}
+      />
 
     </Drawer.Navigator>
   );
 }
+
+function GaztaroaNavegador({ navigation }) {
+  return (
+    <Stack.Navigator
+      initialRouteName="Login"
+      headerMode= 'none'
+      transitionConfig = 'noTransitionConfig'
+      
+    >
+      <Stack.Screen
+        name="Login"
+        component={LoginNavegador}
+        options={{
+          gestureEnabled: false
+        }}  
+      />
+      <Stack.Screen
+        name="Drawer"
+        component={DrawerNavegador}
+        options={{
+          gestureEnabled: false
+        }}  
+      />
+      <Stack.Screen
+        name="SignUp"
+        component={SignUpNavegador}
+        options={{
+          gestureEnabled: true
+        }} 
+      />
+    </Stack.Navigator>
+  );
+}
+
 
 class Campobase extends Component {
 
@@ -310,7 +391,7 @@ class Campobase extends Component {
     return (
       <NavigationContainer>
         <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight }}>
-          <DrawerNavegador />
+          <GaztaroaNavegador />
         </View>
         
       </NavigationContainer>
