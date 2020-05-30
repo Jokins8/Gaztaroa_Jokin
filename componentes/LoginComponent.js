@@ -2,6 +2,11 @@ import React, { Component } from 'react';
 import { View, Button, Text, TextInput, StyleSheet, TouchableWithoutFeedback, Keyboard, Image } from 'react-native';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import * as Google from "expo-google-app-auth";
+import firebase from 'firebase'
+require('firebase/auth')
+//import GoogleButton from 'react-google-button'
+
 class Login extends Component {
     state = {
         email: "",
@@ -25,6 +30,7 @@ class Login extends Component {
             });
         }
     };
+
     loginHandler = () => {
         const { navigate } = this.props.navigation;
         const apiKey = "AIzaSyCGSqNJuwxTLagZhIQf1bGKXtjRCD9ODsQ";
@@ -57,8 +63,109 @@ class Login extends Component {
             });
     };
 
+    signInWithGoogle = async () => {
+        const IOS_CLIENT_ID =
+            "373083290781-3fcscsa04jolfq15q9qju18cgngk2hfe.apps.googleusercontent.com";
+        const ANDROID_CLIENT_ID =
+            "your-android-client-id";
+        try {
+            const result = await Google.logInAsync({
+                iosClientId: IOS_CLIENT_ID,
+                androidClientId: ANDROID_CLIENT_ID,
+                scopes: ["profile", "email"]
+            });
+
+            if (result.type === "success") {
+                //console.log("LoginScreen.js.js 21 | ", result.user.givenName);
+                this.onSignIn(result);
+                return result.accessToken;
+            } else {
+                return { cancelled: true };
+            }
+        } catch (e) {
+            console.log('LoginScreen.js.js 30 | Error with login', e);
+            return { error: true };
+        }
+    };
+    isUserEqual = (googleUser, firebaseUser) => {
+        //console.log(googleUser.user.id);
+        if (firebaseUser) {
+            var providerData = firebaseUser.providerData;
+            for (var i = 0; i < providerData.length; i++) {
+                if (providerData[i].providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID &&
+                    providerData[i].uid === googleUser.user.id) {
+                    // We don't need to reauth the Firebase connection.
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    onSignIn = googleUser => {
+        const { navigate } = this.props.navigation;
+        //console.log('Google Auth Response', googleUser);
+        // We need to register an Observer on Firebase Auth to make sure auth is initialized.
+        var unsubscribe = firebase.auth().onAuthStateChanged(
+            function (firebaseUser) {
+                unsubscribe();
+                // Check if we are already signed-in Firebase with the correct user.
+                if (!this.isUserEqual(googleUser, firebaseUser)) {
+                    // Build Firebase credential with the Google ID token.
+                    var credential = firebase.auth.GoogleAuthProvider.credential(
+                        googleUser.idToken,
+                        googleUser.accessToken
+                    );
+                    // Sign in with credential from the Google user.
+                    firebase
+                        .auth()
+                        .signInWithCredential(credential)
+                        .then(function (result) {
+                            console.log('user signed in ');
+                            if (result.additionalUserInfo.isNewUser) {
+                                firebase
+                                    .database()
+                                    .ref('/users/' + result.user.uid)
+                                    .set({
+                                        gmail: result.user.email,
+                                        profile_picture: result.additionalUserInfo.profile.picture,
+                                        first_name: result.additionalUserInfo.profile.given_name,
+                                        last_name: result.additionalUserInfo.profile.family_name,
+                                        created_at: Date.now()
+                                    })
+                                    .then(function (snapshot) {
+                                        // console.log('Snapshot', snapshot);
+                                    });
+                            } else {
+                                firebase
+                                    .database()
+                                    .ref('/users/' + result.user.uid)
+                                    .update({
+                                        last_logged_in: Date.now()
+                                    });
+                            }
+                            navigate('Drawer')
+                        })
+                        .catch(function (error) {
+                            // Handle Errors here.
+                            var errorCode = error.code;
+                            var errorMessage = error.message;
+                            // The email of the user's account used.
+                            var email = error.email;
+                            // The firebase.auth.AuthCredential type that was used.
+                            var credential = error.credential;
+                            // ...
+                        });
+                } else {
+                    navigate('Drawer')
+                    console.log('User already signed-in Firebase.');
+                }
+            }.bind(this)
+        );
+    };
+
     render() {
         const { navigate } = this.props.navigation;
+
         return (
             <KeyboardAwareScrollView
                 style={{ backgroundColor: '#d6edff' }}
@@ -91,8 +198,10 @@ class Login extends Component {
                         />
                         <View style={styles.button}>
                             <Button title="Login" onPress={this.loginHandler} buttonStyle={styles.button} disabled={(this.state.email === "" || this.state.password === "")} />
+                            <Button title="Login con Google" onPress={this.signInWithGoogle} buttonStyle={styles.button}  />
+
                         </View>
-                        <Text style={styles.text}>Todavía no estás registrado? 
+                        <Text style={styles.text}>Todavía no estás registrado?
                          <Text onPress={() => navigate('SignUp', { user: this.state.email })} style={styles.navigateText}>  Regístrate</Text>
                         </Text>
                     </View>
