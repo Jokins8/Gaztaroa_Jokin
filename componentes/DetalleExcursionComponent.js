@@ -15,11 +15,12 @@ const mapStateToProps = state => {
     return {
         excursiones: state.excursiones,
         comentarios: state.comentarios,
-        favoritos: state.favoritos
+        favoritos: state.favoritos,
+        actualuser: state.actualuser
     }
 }
 const mapDispatchToProps = dispatch => ({
-    postFavorito: (excursionId) => dispatch(postFavorito(excursionId)),
+    postFavorito: (excursionId, user) => dispatch(postFavorito(excursionId, user)),
     postComentario: (excursionId, valoracion, autor, comentario, id) => dispatch(postComentario(excursionId, valoracion, autor, comentario, id))
 })
 
@@ -160,8 +161,8 @@ class DetalleExcursion extends Component {
         }
     }
 
-    marcarFavorito(excursionId) {
-        this.props.postFavorito(excursionId);
+    marcarFavorito(excursionId, user) {
+        this.props.postFavorito(excursionId, user);
     }
 
     resetForm() {
@@ -201,13 +202,21 @@ class DetalleExcursion extends Component {
     };
 
     render() {
+        //console.log(this.props.favoritos);
         const { excursionId } = this.props.route.params;
+        const favsuser=[];
+        for (i = 0; i <this.props.favoritos.user.length; i++) {
+            if (this.props.favoritos.user[i] === this.props.actualuser) {
+                favsuser[favsuser.length]=this.props.favoritos.excursion[i];
+            }
+        }
+        //console.log(favsuser);
         return (
             <ScrollView>
                 <RenderExcursion
                     excursion={this.props.excursiones.excursiones[+excursionId]}
-                    favorita={this.props.favoritos.some(el => el === excursionId)}
-                    onPressFav={() => this.marcarFavorito(excursionId)}
+                    favorita={favsuser.some(el => el === excursionId)}
+                    onPressFav={() => this.marcarFavorito(excursionId, this.props.actualuser)}
                     onPressCom={() => this.toggleModal()}
                     onPressShare={() => this.onShare(this.props.excursiones.excursiones[+excursionId].nombre)}
                 />

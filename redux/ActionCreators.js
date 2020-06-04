@@ -150,20 +150,20 @@ export const addActividades = (actividades) => ({
 });
 
 
-export const postFavorito = (excursionId) => (dispatch) => {
+export const postFavorito = (excursionId, user) => (dispatch) => {
     setTimeout(() => {
-        dispatch(addFavorito(excursionId));
+        dispatch(addFavorito(excursionId, user));
     }, 2000);
 };
 
-export const addFavorito = (excursionId) => ({
+export const addFavorito = (excursionId, user) => ({
     type: ActionTypes.ADD_FAVORITO,
-    payload: excursionId
+    payload: [excursionId, user]
 });
 
-export const borrarFavorito = (excursionId) => ({
+export const borrarFavorito = (excursionId, user) => ({
     type: ActionTypes.BORRAR_FAVORITO,
-    payload: excursionId
+    payload: [excursionId, user]
 });
 
 export const postComentario = (excursionId, valoracion, autor, comentario, id) => (dispatch) => {
@@ -182,4 +182,15 @@ export const postComentario = (excursionId, valoracion, autor, comentario, id) =
 export const addComentario = (excursionId, valoracion, autor, comentario, dia, id) => ({
     type: ActionTypes.ADD_COMENTARIO,
     payload: [excursionId, valoracion, autor, comentario, dia, id]
+});
+
+export const postActualuser = (email) => (dispatch) => {
+    setTimeout(() => {
+        dispatch(addActualuser(email));
+    }, 2000);
+};
+
+export const addActualuser = (email) => ({
+    type: ActionTypes.ADD_ACTUALUSER,
+    payload: email
 });

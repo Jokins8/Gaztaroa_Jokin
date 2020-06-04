@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableWithoutFeedback, Keyboard, Image } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableWithoutFeedback, Keyboard, Image, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 class SignUp extends Component {
@@ -72,11 +72,12 @@ class SignUp extends Component {
             })
             .then(res => res.json())
             .then(parsedRes => {
-                console.log(parsedRes);
+                //console.log(parsedRes.error.message);
                 if (!parsedRes.idToken) {
-                    alert("An error occured, please check your data!");
+                    Alert.alert("Error",parsedRes.error.message);
                 } else {
-                    navigate('Login', { user: this.state.email })
+                    Alert.alert( "Bienvenid@!","Te has registrado correctamente. Ahora Logeate con tus nuevas credenciales.");
+                    navigate('Login')
                 }
             });
     };

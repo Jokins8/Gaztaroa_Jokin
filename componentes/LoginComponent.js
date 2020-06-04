@@ -1,11 +1,22 @@
 import React, { Component } from 'react';
-import { View, Button, Text, TextInput, StyleSheet, TouchableWithoutFeedback, Keyboard, Image } from 'react-native';
+import { View, Button, Text, TextInput, StyleSheet, TouchableWithoutFeedback, Keyboard, Image, Alert } from 'react-native';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as Google from "expo-google-app-auth";
 import firebase from 'firebase'
 require('firebase/auth')
 //import GoogleButton from 'react-google-button'
+import { postActualuser } from '../redux/ActionCreators';
+import { connect } from 'react-redux';
+
+const mapStateToProps = state => {
+    return {
+        actualuser: state.actualuser
+    }
+}
+const mapDispatchToProps = dispatch => ({
+    postActualuser: (email) => dispatch(postActualuser(email))
+})
 
 class Login extends Component {
     state = {
@@ -54,11 +65,12 @@ class Login extends Component {
             })
             .then(res => res.json())
             .then(parsedRes => {
-                console.log(parsedRes);
+                //console.log(parsedRes);
                 if (!parsedRes.idToken) {
-                    alert("Email o contraseña incorrectos. Pruebe de nuevo");
+                    Alert.alert("Error","Email o contraseña incorrectos. Pruebe de nuevo");
                 } else {
-                    navigate('Drawer', { user: this.state.email })
+                    this.props.postActualuser(this.state.email);
+                    navigate('Drawer');
                 }
             });
     };
@@ -143,7 +155,8 @@ class Login extends Component {
                                         last_logged_in: Date.now()
                                     });
                             }
-                            navigate('Drawer')
+                            this.props.postActualuser(googleUser.user.email);
+                            navigate('Drawer');
                         })
                         .catch(function (error) {
                             // Handle Errors here.
@@ -156,7 +169,8 @@ class Login extends Component {
                             // ...
                         });
                 } else {
-                    navigate('Drawer')
+                    this.props.postActualuser(googleUser.user.email);
+                    navigate('Drawer');
                     console.log('User already signed-in Firebase.');
                 }
             }.bind(this)
@@ -198,7 +212,7 @@ class Login extends Component {
                         />
                         <View style={styles.button}>
                             <Button title="Login" onPress={this.loginHandler} buttonStyle={styles.button} disabled={(this.state.email === "" || this.state.password === "")} />
-                            <Button title="Login con Google" onPress={this.signInWithGoogle} buttonStyle={styles.button}  />
+                            <Button title="Login con Google" onPress={this.signInWithGoogle} buttonStyle={styles.button} />
 
                         </View>
                         <Text style={styles.text}>Todavía no estás registrado?
@@ -244,4 +258,4 @@ const styles = StyleSheet.create({
         height: 80
     }
 });
-export default Login;
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

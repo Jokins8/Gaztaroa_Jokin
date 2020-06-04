@@ -9,12 +9,13 @@ import { borrarFavorito } from '../redux/ActionCreators';
 const mapStateToProps = state => {
     return {
         excursiones: state.excursiones,
-        favoritos: state.favoritos
+        favoritos: state.favoritos,
+        actualuser: state.actualuser
     }
 }
 
 const mapDispatchToProps = dispatch => ({
-    borrarFavorito: (excursionId) => dispatch(borrarFavorito(excursionId)),
+    borrarFavorito: (excursionId, user) => dispatch(borrarFavorito(excursionId, user)),
 })
 
 class VistaFavoritos extends Component {
@@ -29,13 +30,19 @@ class VistaFavoritos extends Component {
                     onPress: () => console.log(name + ' Favorito no borrado'),
                     style: "cancel"
                 },
-                { text: "OK", onPress: () => this.props.borrarFavorito(id) }
+                { text: "OK", onPress: () => this.props.borrarFavorito(id, this.props.actualuser) }
             ],
             { cancelable: false }
         );
 
     render() {
         const { navigate } = this.props.navigation;
+        const favsuser=[];
+        for (i = 0; i <this.props.favoritos.user.length; i++) {
+            if (this.props.favoritos.user[i] === this.props.actualuser) {
+                favsuser[favsuser.length]=this.props.favoritos.excursion[i];
+            }
+        }
 
         const renderFavoritoItem = ({ item, index }) => {
 
@@ -46,7 +53,7 @@ class VistaFavoritos extends Component {
                     onPress: () => this.BorrarAlert(item.nombre, item.id)
                 }];
 
-            if (this.props.favoritos.some(el => el === item.id)) {
+            if (favsuser.some(el => el === item.id)) {
                 return (
                     <Swipeout right={rightButton} autoClose={true} >
                         <ListItem

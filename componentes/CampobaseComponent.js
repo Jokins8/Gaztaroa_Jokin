@@ -243,7 +243,7 @@ function CustomDrawerContent(props) {
   );
 }
 
-function DrawerNavegador() {
+function DrawerNavegador({ navigation }) {
   return (
     <Drawer.Navigator
       drawerStyle={{

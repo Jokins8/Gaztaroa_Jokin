@@ -50,7 +50,6 @@ function RenderItem(props) {
 class Home extends Component {
 
     render() {
-
         return (
             <ScrollView>
                 <RenderItem item={this.props.cabeceras.cabeceras.filter((cabecera) => cabecera.destacado)[0]}
