@@ -7,7 +7,8 @@ import * as Calendar from 'expo-calendar';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
-import { Card, Icon} from 'react-native-elements';
+import { Card, Icon } from 'react-native-elements';
+
 
 class PruebaEsfuerzo extends Component {
 
@@ -245,23 +246,28 @@ class PruebaEsfuerzo extends Component {
                     />
                 </View>
 
-                <Modal animationType={"slide"} transparent={false}
+                <Modal animationType={"slide"} transparent={false} 
                     visible={this.state.showModal}
                     onDismiss={() => { this.toggleModal(); this.resetForm(); }} onRequestClose={() => { this.toggleModal(); this.resetForm(); }}>
                     <View style={styles.modal}>
                         <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
                             <Text style={styles.modalTitle}>Detalle de la reserva</Text>
-                            {this.state.image && <Image source={{ uri: this.state.image }} style={{ width: 100, height: 100, borderRadius: 400 / 2 }} />}
-                            <Text style={styles.modalText}>Edad: {this.state.edad}</Text>
-                            <Text style={styles.modalText}>Federado?: {this.state.federado ? 'Si' : 'No'}</Text>
-                            <Text style={styles.modalText}>Día y hora: {this.state.fecha}</Text>
-                            <Button
-                                onPress={() => { this.toggleModal(); this.resetForm(); }}
-                                color={colorGaztaroaOscuro} title="Cerrar"
-                            />
+                            <Card
+                            image={{ uri: this.state.image }}
+                            imageStyle={{ width: 300, height: 300 }}
+                            >
+                                
+                                <Text style={styles.modalText}>Edad: {this.state.edad}</Text>
+                                <Text style={styles.modalText}>Federado?: {this.state.federado ? 'Si' : 'No'}</Text>
+                                <Text style={styles.modalText}>Día y hora: {this.state.fecha}</Text>
+                            </Card> 
                             <Button
                                 onPress={() => { this.EventoAlert(details); }}
                                 color={colorGaztaroaOscuro} title="Añadir a calendario"
+                            />
+                            <Button
+                                onPress={() => { this.toggleModal(); this.resetForm(); }}
+                                color={colorGaztaroaOscuro} title="Cerrar"
                             />
                         </SafeAreaView>
                     </View>
@@ -288,11 +294,12 @@ const styles = StyleSheet.create({
         marginLeft: 4
     },
     modal: {
-        justifyContent: 'center', margin: 20
+        justifyContent: 'center', 
+        margin: 20,
     },
     modalTitle: {
         fontSize: 24,
-        fontWeight: 'bold', backgroundColor: '#512DA8', textAlign: 'center', color: 'white',
+        fontWeight: 'bold', backgroundColor: colorGaztaroaOscuro, textAlign: 'center', color: 'white',
         marginBottom: 20
     },
     modalText: {
